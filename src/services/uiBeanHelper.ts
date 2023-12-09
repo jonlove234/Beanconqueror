@@ -1,5 +1,5 @@
 /** Core */
-import { Inject, Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { Brew } from '../classes/brew/brew';
 import { UIBrewStorage } from './uiBrewStorage';
@@ -8,7 +8,7 @@ import { Bean } from '../classes/bean/bean';
 import BEAN_TRACKING from '../data/tracking/beanTracking';
 import { BeansAddComponent } from '../app/beans/beans-add/beans-add.component';
 import { UIAnalytics } from './uiAnalytics';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { BeanArchivePopoverComponent } from '../app/beans/bean-archive-popover/bean-archive-popover.component';
 import { BeansEditComponent } from '../app/beans/beans-edit/beans-edit.component';
 import { BeansDetailComponent } from '../app/beans/beans-detail/beans-detail.component';
@@ -26,7 +26,6 @@ import { UIHelper } from './uiHelper';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { ROASTS_ENUM } from '../enums/beans/roasts';
 import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
-import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
 import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
 
 /**
@@ -76,10 +75,7 @@ export class UIBeanHelper {
   }
 
   public fieldVisible(_settingsField: boolean, _data?: any) {
-    if (_settingsField === true) {
-      return true;
-    }
-    return false;
+    return _settingsField === true;
   }
 
   public getAllBrewsForThisBean(_uuid: string): Array<Brew> {
@@ -90,9 +86,8 @@ export class UIBeanHelper {
 
     const brewsForBean: Array<Brew> = [];
     const brews: Array<Brew> = this.allStoredBrews;
-    const beanUUID: string = _uuid;
     for (const brew of brews) {
-      if (brew.bean === beanUUID) {
+      if (brew.bean === _uuid) {
         brewsForBean.push(brew);
       }
     }
@@ -105,11 +100,10 @@ export class UIBeanHelper {
       this.allStoredBeans = this.uiBeanStorage.getAllEntries();
     }
 
-    const roastedBeans = this.allStoredBeans.filter(
+    return this.allStoredBeans.filter(
       (e) =>
         e.bean_roast_information && e.bean_roast_information.bean_uuid === _uuid
     );
-    return roastedBeans;
   }
 
   public getAllRoastedBeansForRoastingMachine(_uuid: string) {
@@ -118,12 +112,11 @@ export class UIBeanHelper {
       this.allStoredBeans = this.uiBeanStorage.getAllEntries();
     }
 
-    const roastedBeans = this.allStoredBeans.filter(
+    return this.allStoredBeans.filter(
       (e) =>
         e.bean_roast_information &&
         e.bean_roast_information.roaster_machine === _uuid
     );
-    return roastedBeans;
   }
 
   public async __checkQRCodeScannerInformationPage() {
@@ -151,7 +144,7 @@ export class UIBeanHelper {
       const bean: Bean = await newMapper.mapServerToClientBean(_scannedQRBean);
       await this.uiAlert.hideLoadingSpinner();
 
-      //Show the information before the popup would come up
+      // Show the information before the popup would come up
       await this.__checkQRCodeScannerInformationPage();
 
       if (bean !== null) {
@@ -226,6 +219,7 @@ export class UIBeanHelper {
       bean.attachments = [];
       bean.favourite = false;
       bean.rating = 0;
+      bean.bean_information = [];
 
       // Empty it.
       const newPredefinedFlavors = {};
@@ -239,11 +233,6 @@ export class UIBeanHelper {
         }
       }
       bean.cupped_flavor.predefined_flavors = newPredefinedFlavors;
-
-      if (bean.bean_information && Object.keys(bean.bean_information)) {
-      } else {
-        bean.bean_information = [];
-      }
 
       bean.beanMix = {
         0: 'UNKNOWN' as BEAN_MIX_ENUM,
@@ -276,25 +265,17 @@ export class UIBeanHelper {
       }[protoBean.bean_roasting_type];
 
       await this.uiAlert.hideLoadingSpinner();
-      if (bean !== null) {
-        const modal = await this.modalController.create({
-          component: BeansAddComponent,
-          id: BeansAddComponent.COMPONENT_ID,
-          componentProps: { bean_template: bean, user_shared_bean: bean },
-        });
-        await modal.present();
-        await modal.onWillDismiss();
-      } else {
-        this.uiAlert.showMessage(
-          'USER_BEAN_SHARINGSHARING_ERROR',
-          'ERROR_OCCURED',
-          undefined,
-          true
-        );
-      }
+      const modal = await this.modalController.create({
+        component: BeansAddComponent,
+        id: BeansAddComponent.COMPONENT_ID,
+        componentProps: { bean_template: bean, user_shared_bean: bean },
+      });
+      await modal.present();
+      await modal.onWillDismiss();
     } catch (ex) {
+      // Apparently do nothing
     } finally {
-      this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.hideLoadingSpinner();
     }
   }
 
