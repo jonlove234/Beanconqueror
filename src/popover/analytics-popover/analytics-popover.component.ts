@@ -3,17 +3,16 @@ import { Settings } from '../../classes/settings/settings';
 import { ModalController, Platform } from '@ionic/angular';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'analytics-popover',
   templateUrl: './analytics-popover.component.html',
-  styleUrls: ['./analytics-popover.component.scss'],
 })
 export class AnalyticsPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'analytics-popover';
   private readonly settings: Settings;
-
-  private disableHardwareBack;
+  private disableHardwareBack: Subscription;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiAnalytics: UIAnalytics,
@@ -27,7 +26,7 @@ export class AnalyticsPopoverComponent implements OnInit {
     try {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
-        (processNextHandler) => {
+        () => {
           // Don't do anything.
         }
       );
