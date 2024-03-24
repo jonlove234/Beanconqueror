@@ -20,6 +20,10 @@ ion-title {
   font-size: 24px;
   color: var(--ion-text-color);
 }
+.font-size-12 {
+  font-size: 12px!important;
+  line-height: 12px!important;
+}
 .font-size-14 {
   font-size: 14px!important;
   line-height: 14px!important;
@@ -975,4 +979,49 @@ ion-select::part(label) {
 
 h6 {
   margin-top:10px;
+}
+
+
+ion-modal.loading-modal {
+  --min-width: auto;
+  --width: auto;
+  --min-height: auto;
+  --height: auto;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: -ms-flexbox;
+  display: flex;
+  position: fixed;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  outline: none;
+  font-family: var(--ion-font-family, inherit);
+  contain: strict;
+  -ms-touch-action: none;
+  touch-action: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  z-index: 1001;
+  --background: var(--ion-color-step-50, #f2f2f2);
+  --max-width: 280px;
+  --max-height: 90%;
+  --spinner-color: var(--ion-color-primary, #3880ff);
+  --backdrop-opacity: var(--ion-backdrop-opacity, 0.32)!important;
+  color: var(--ion-color-step-850, #262626);
+  font-size: 0.875rem;
+  /**Overwrite**/
+  --min-height: inherit !important;
+  --min-width: inherit !important;
+}
+loading-popover {
+  height:150px!important;
+  width:200px;
 }

@@ -32,6 +32,7 @@ import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
   public startup_view: STARTUP_VIEW_ENUM;
+  public date_format: string;
 
   public matomo_analytics: boolean;
   public qr_scanner_information: boolean;
@@ -91,6 +92,17 @@ export class Settings implements ISettings {
   public graph: {
     ESPRESSO: IBrewGraphs;
     FILTER: IBrewGraphs;
+  };
+
+  public graph_time: {
+    ESPRESSO: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
+    FILTER: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
   };
 
   public graph_weight: {
@@ -172,6 +184,8 @@ export class Settings implements ISettings {
   public visualizer_password: string;
   public visualizer_upload_automatic: boolean;
 
+  public show_backup_issues: boolean;
+
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
     return {
@@ -222,7 +236,7 @@ export class Settings implements ISettings {
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
-
+    this.date_format = 'DD.MM.YYYY';
     this.config = new Config();
 
     this.manage_parameters = new ManageBrewParameter();
@@ -289,6 +303,17 @@ export class Settings implements ISettings {
     this.graph.ESPRESSO = this.GET_BREW_GRAPHS();
     this.graph.FILTER = this.GET_BREW_GRAPHS();
     this.graph.FILTER.realtime_flow = false;
+
+    this.graph_time = {
+      ESPRESSO: {
+        NORMAL_SCREEN: 20,
+        FULL_SCREEN: 60,
+      },
+      FILTER: {
+        NORMAL_SCREEN: 20,
+        FULL_SCREEN: 60,
+      },
+    };
 
     this.graph_weight = {
       ESPRESSO: {
@@ -395,6 +420,8 @@ export class Settings implements ISettings {
     this.visualizer_username = '';
     this.visualizer_password = '';
     this.visualizer_upload_automatic = false;
+
+    this.show_backup_issues = true;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

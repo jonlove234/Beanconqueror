@@ -33,6 +33,8 @@ import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIWaterStorage } from '../../../services/uiWaterStorage';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { BrewBrixCalculatorComponent } from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
 import { BrewBeverageQuantityCalculatorComponent } from '../../../app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
 
@@ -82,6 +84,9 @@ import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose
 import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFifth.json';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { BrewPopoverExtractionComponent } from 'src/app/brew/brew-popover-extraction/brew-popover-extraction.component';
 
 declare var cordova;
 declare var Plotly;
@@ -129,8 +134,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public maxBrewRating: number = 5;
 
-  public preparationMethodHasBeenFocused: boolean = false;
-
   public profileResultsAvailable: boolean = false;
   public profileResults: string[] = [];
   public profileFocused: boolean = false;
@@ -150,12 +153,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public temperatureDeviceSubscription: Subscription = undefined;
   private scaleFlowChangeSubscription: Subscription = undefined;
   private scaleListeningSubscription: Subscription = undefined;
+  private preparationMethodFocusedSubscription: Subscription = undefined;
+
   private flowProfileArr = [];
   private flowProfileArrObjs = [];
   private flowProfileArrCalculated = [];
   private flowProfileTempAll = [];
   private flowTime: number = undefined;
   private flowSecondTick: number = 0;
+  private flowNCalculation: number = 0;
   private startingFlowTime: number = undefined;
   private brewFlowGraphSubject: EventEmitter<any> = new EventEmitter();
   private brewPressureGraphSubject: EventEmitter<any> = new EventEmitter();
@@ -205,7 +211,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
+    private readonly modalCtrl: ModalController,
+    private readonly uiAnalytics: UIAnalytics,
     private readonly uiExcel: UIExcel,
     private readonly uiFileHelper: UIFileHelper,
     private readonly screenOrientation: ScreenOrientation,
@@ -213,9 +221,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly ngZone: NgZone,
     private readonly uiToast: UIToast,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
+    private readonly eventQueue: EventQueueService
   ) {}
-
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
   private writeExecutionTimeToNotes(
     _message: string,
     _scriptId: number,
@@ -225,7 +241,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     let timestamp: string = this.data.brew_time + '';
     if (this.settings.brew_milliseconds) {
-      timestamp = '.' + this.data.brew_time_milliseconds;
+      timestamp = timestamp + '.' + this.data.brew_time_milliseconds;
     }
     scriptInformation =
       timestamp +
@@ -273,7 +289,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const tool = this.data
         .getPreparation()
         .tools.find((e) => e.config.uuid === id);
-      if (tool.archived === true) {
+      if (tool?.archived === true) {
         tools.push(tool);
       }
     }
@@ -365,19 +381,22 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.initializeFlowChart();
           setTimeout(() => {
             // Fix that you also see the brew weight
-            const weightEl = this.smartScaleWeightEl.nativeElement;
-            if (
-              this.data.getPreparation().getPresetStyleType() ===
-              PREPARATION_STYLE_TYPE.ESPRESSO
-            ) {
-              weightEl.textContent = this.data.brew_beverage_quantity + ' g';
-            } else {
-              if (this.data.brew_beverage_quantity > 0) {
+            try {
+              const weightEl = this.smartScaleWeightEl.nativeElement;
+              if (
+                this.data.getPreparation().getPresetStyleType() ===
+                PREPARATION_STYLE_TYPE.ESPRESSO
+              ) {
                 weightEl.textContent = this.data.brew_beverage_quantity + ' g';
               } else {
-                weightEl.textContent = this.data.brew_quantity + ' g';
+                if (this.data.brew_beverage_quantity > 0) {
+                  weightEl.textContent =
+                    this.data.brew_beverage_quantity + ' g';
+                } else {
+                  weightEl.textContent = this.data.brew_quantity + ' g';
+                }
               }
-            }
+            } catch (ex) {}
           }, 350);
         }
       }
@@ -474,16 +493,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public resetPreparationTools() {
     setTimeout(() => {
-      // Wait for 150ms, so we get the new preparation
-      if (this.preparationMethodHasBeenFocused === true) {
-        this.data.method_of_preparation_tools = [];
-        this.preparationMethodHasBeenFocused = false;
+      this.data.method_of_preparation_tools = [];
 
-        this.instancePreparationDevice();
+      this.instancePreparationDevice();
 
-        if (this.timer.isTimerRunning() === false) {
-          this.initializeFlowChart();
-        }
+      if (this.timer?.isTimerRunning() === false) {
+        this.initializeFlowChart();
       }
     }, 150);
   }
@@ -717,11 +732,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.deattachToRefractometerChange();
     this.deattachToScaleListening();
     this.stopFetchingAndSettingDataFromXenia();
+    this.deattachToPreparationMethodFocused();
   }
 
   public preparationMethodFocused() {
-    // Needs to set , because ion-change triggers on smartphones but not on websites, and therefore the value is overwritten when you use a brew template
-    this.preparationMethodHasBeenFocused = true;
+    this.deattachToPreparationMethodFocused();
+    const eventSubs = this.eventQueue.on(
+      AppEventType.PREPARATION_SELECTION_CHANGED
+    );
+    this.preparationMethodFocusedSubscription = eventSubs.subscribe((next) => {
+      this.resetPreparationTools();
+      this.deattachToPreparationMethodFocused();
+    });
   }
 
   public attachToScaleWeightChange() {
@@ -840,6 +862,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const scale: BluetoothScale = this.bleManager.getScale();
     return !!scale;
+  }
+  public smartScaleSupportsTaring() {
+    try {
+      return this.bleManager.getScale().supportsTaring;
+    } catch (ex) {
+      return false;
+    }
   }
 
   public pressureDeviceConnected() {
@@ -1150,6 +1179,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.scaleListeningSubscription = undefined;
     }
   }
+  public deattachToPreparationMethodFocused() {
+    if (this.preparationMethodFocusedSubscription) {
+      this.preparationMethodFocusedSubscription.unsubscribe();
+      this.preparationMethodFocusedSubscription = undefined;
+    }
+  }
 
   public shallFlowProfileBeHidden(): boolean {
     if (
@@ -1368,7 +1403,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         });
       } else if (_event === 'AUTO_LISTEN_SCALE') {
         // Don't use awaits.
-        scale.setTimer(SCALE_TIMER_COMMAND.START);
+        const scaleType = this.bleManager.getScale()?.getScaleType();
+
+        if (
+          scaleType === ScaleType.DIFLUIDMICROBALANCETI ||
+          scaleType === ScaleType.DIFLUIDMICROBALANCE
+        ) {
+          //The microbalance has somehow an firmware issue, that when starting on autolistening mode and don't delay the start commando, the scale goes corrupt.
+
+          scale.setTimer(SCALE_TIMER_COMMAND.START);
+        } else {
+          scale.setTimer(SCALE_TIMER_COMMAND.START);
+        }
       }
       if (
         pressureDevice &&
@@ -1748,6 +1794,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.flow_profile_raw = new BrewFlow();
       this.flowProfileTempAll = [];
+      this.flowNCalculation = 0;
 
       // We just initialize flow chart for the pressure sensor when the type is espresso
       if (
@@ -1776,6 +1823,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       // The pressure or weight went down and we need to reset the graph now still
       this.flow_profile_raw = new BrewFlow();
       this.flowProfileTempAll = [];
+      this.flowNCalculation = 0;
       this.initializeFlowChart(false);
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await new Promise((resolve) => {
@@ -1902,10 +1950,29 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             let newLayoutIsNeeded: boolean = false;
             /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
             let newRenderingInstance = 0;
-            if (this.maximizeFlowGraphIsShown === true) {
-              newRenderingInstance = Math.floor(this.timer.getSeconds() / 60);
+
+            let normalScreenTime: number;
+            let fullScreenTime: number;
+            if (
+              this.getPreparation().style_type ===
+              PREPARATION_STYLE_TYPE.ESPRESSO
+            ) {
+              normalScreenTime =
+                this.settings.graph_time.ESPRESSO.NORMAL_SCREEN;
+              fullScreenTime = this.settings.graph_time.ESPRESSO.FULL_SCREEN;
             } else {
-              newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
+              normalScreenTime = this.settings.graph_time.FILTER.NORMAL_SCREEN;
+              fullScreenTime = this.settings.graph_time.FILTER.FULL_SCREEN;
+            }
+
+            if (this.maximizeFlowGraphIsShown === true) {
+              newRenderingInstance = Math.floor(
+                this.timer.getSeconds() / fullScreenTime
+              );
+            } else {
+              newRenderingInstance = Math.floor(
+                this.timer.getSeconds() / normalScreenTime
+              );
             }
 
             if (
@@ -1913,9 +1980,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               this.lastChartRenderingInstance === -1
             ) {
               let subtractTime: number = this.maximizeFlowGraphIsShown
-                ? 40
-                : 10;
-              const addTime: number = this.maximizeFlowGraphIsShown ? 70 : 30;
+                ? fullScreenTime - 20
+                : normalScreenTime - 10;
+              const addTime: number = this.maximizeFlowGraphIsShown
+                ? fullScreenTime + 10
+                : normalScreenTime + 10;
               if (this.data.brew_time <= 10) {
                 subtractTime = 0;
               }
@@ -2156,74 +2225,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public getActualSmoothedWeightPerSecond(): number {
     try {
-      const scaleType = this.bleManager.getScale()?.getScaleType();
-
-      if (
-        scaleType === ScaleType.SMARTCHEF ||
-        scaleType === ScaleType.BLACKCOFFEE ||
-        this.data.getPreparation().style_type ===
-          PREPARATION_STYLE_TYPE.ESPRESSO
-      ) {
-        if (this.flow_profile_raw.weight.length <= 3) {
-          return 0;
-        }
-        const lastSecond = moment(
-          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
-            .timestamp,
-          'HH:mm:ss'
-        ).seconds();
-        const lastWeight =
-          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
-            .actual_weight;
-        let lastSubtractWeight: number = 0;
-
-        let subtractLength = 2;
-        if (
-          scaleType === ScaleType.SMARTCHEF ||
-          scaleType === ScaleType.BLACKCOFFEE
-        ) {
-          subtractLength = 2;
-        } else {
-          if (this.flow_profile_raw.weight.length >= 11) {
-            // We got a better scale, so atleast subtract 10
-            subtractLength = 10;
-          }
-        }
-
-        for (
-          let i = this.flow_profile_raw.weight.length - subtractLength;
-          i >= 0;
-          i--
-        ) {
-          const newSecond = moment(
-            this.flow_profile_raw.weight[i].timestamp,
-            'HH:mm:ss'
-          ).seconds();
-          if (lastSecond === newSecond) {
-            // Still the same range
-            lastSubtractWeight = this.flow_profile_raw.weight[i].actual_weight;
-          } else {
-            // Break
-            // If we didn't found one value in range, we take the second before.
-            if (lastSubtractWeight === 0) {
-              lastSubtractWeight =
-                this.flow_profile_raw.weight[i].actual_weight;
-            }
-            break;
-          }
-        }
-        return this.uiHelper.toFixedIfNecessary(
-          lastWeight - lastSubtractWeight,
-          2
-        );
-      } else {
-        const lastflow =
-          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
-        const smoothedWeight = lastflow.actual_smoothed_weight;
-        const oldSmoothedWeight = lastflow.old_smoothed_weight;
-        const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
-        return this.uiHelper.toFixedIfNecessary(flowValue, 2);
-      }
+      return this.uiHelper.toFixedIfNecessary(
+        this.flow_profile_raw.realtimeFlow[
+          this.flow_profile_raw.realtimeFlow.length - 1
+        ].flow_value,
+        2
+      );
     } catch (ex) {
       return 0;
     }
@@ -2463,8 +2470,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           if (event) {
             switch (event.command) {
               case SCALE_TIMER_COMMAND.START:
-                this.timer.startTimer();
-                this.checkChanges();
+                if (this.timer.isTimerRunning() === false) {
+                  this.timer.startTimer();
+                  this.checkChanges();
+                }
                 break;
               case SCALE_TIMER_COMMAND.STOP:
                 this.timer.pauseTimer();
@@ -2547,7 +2556,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           });
         }
       }
-      if (this.timer.isTimerRunning() === true && _firstStart === false) {
+      if (this.timer?.isTimerRunning() === true && _firstStart === false) {
         this.attachToScaleWeightChange();
       }
       // Always attach flow.
@@ -3245,10 +3254,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const suggestedMaxWeight: number = graph_weight_settings.upper;
 
     const startRange = moment(new Date()).startOf('day').toDate().getTime();
-    let addSecondsOfEndRange = 30;
+
+    let normalScreenTime: number;
+    let fullScreenTime: number;
+    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+      normalScreenTime = this.settings.graph_time.ESPRESSO.NORMAL_SCREEN;
+      fullScreenTime = this.settings.graph_time.ESPRESSO.FULL_SCREEN;
+    } else {
+      normalScreenTime = this.settings.graph_time.FILTER.NORMAL_SCREEN;
+      fullScreenTime = this.settings.graph_time.FILTER.FULL_SCREEN;
+    }
+    let addSecondsOfEndRange = normalScreenTime + 10;
+
     // When reset is triggered, we maybe are already in the maximized screen, so we go for the 70sec directly.
     if (this.maximizeFlowGraphIsShown === true) {
-      addSecondsOfEndRange = 70;
+      addSecondsOfEndRange = fullScreenTime + 10;
     }
     const endRange: number = moment(new Date())
       .startOf('day')
@@ -3607,6 +3627,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               weight = oldWeight;
             }
           }
+        } else {
+          //Check if the weight before this actual weight is less then factor 2.
+          //like we got jumps weight 25.8 grams, next was 259 grams.
+          if (this.flowProfileTempAll.length >= 2) {
+            if (oldWeight * 2 >= weight) {
+              //All good factor is matched
+            } else {
+              //Nothing good, somehow we got spikes.
+              weight = oldWeight;
+            }
+          }
         }
       }
     }
@@ -3638,21 +3669,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       let sameFlowPerTenHerzCounter: number = 0;
 
       let flowHasSomeMinusValueInIt: boolean = false;
-      /**if (scaleType === ScaleType.LUNAR) {
-        // Fix weight values :O
-        for (let i = 0; i < this.flowProfileArr.length; i++) {
-          const theProfileTempEntry = this.flowProfileTempAll[this.flowProfileTempAll.length - (i+1)];
-          if (theProfileTempEntry.actual_weight > 3000) {
-            // Wrong scale values reported. - Fix it back
-            theProfileTempEntry.actual_weight = theProfileTempEntry.old_weight;
-            this.flowProfileArr[i] = theProfileTempEntry.actual_weight;
-          } else if (theProfileTempEntry.actual_weight <= 0 && theProfileTempEntry.old_weight >= 10) {
-            // I don't know if old_weight could just be bigger then 0
-            theProfileTempEntry.actual_weight = theProfileTempEntry.old_weight;
-            this.flowProfileArr[i] = theProfileTempEntry.actual_weight;
-          }
-        }
-      }*/
 
       for (let i = 0; i < this.flowProfileArr.length; i++) {
         const val: number = this.flowProfileArr[i];
@@ -3776,72 +3792,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           calculatedFlowWeight += flowWeight;
         }
 
-        if (
-          scaleType === ScaleType.SMARTCHEF ||
-          scaleType === ScaleType.BLACKCOFFEE
-        ) {
-          if (this.flowProfileArrCalculated.length > 1) {
-            /*On the poor scales, we know that the realtime flow value is pretty "accurate" with the new math formular,
-               thats why we take the realtime flow value, look back for 2 seconds in the timestamp, and if we don'T have enough values, we just use
-               the values which are given*/
-            const time2StampDelta =
-              flowObj.unixTime -
-              this.flowProfileTempAll[this.flowProfileTempAll.length - 2]
-                .unixTime;
-            let twoSecondsLookBack: any = 0;
-
-            twoSecondsLookBack = 2 * Math.floor(1000 / time2StampDelta);
-            if (
-              this.flow_profile_raw.realtimeFlow.length < twoSecondsLookBack
-            ) {
-              twoSecondsLookBack = this.flow_profile_raw.realtimeFlow.length;
-            }
-            let totalflow = 0;
-            for (let i = 0; i < twoSecondsLookBack; i++) {
-              totalflow =
-                totalflow +
-                this.flow_profile_raw.realtimeFlow[
-                  this.flow_profile_raw.realtimeFlow.length - 1 - i
-                ].flow_value;
-            }
-
-            calculatedFlowWeight = totalflow / twoSecondsLookBack;
-          }
-          /*  Old solution, don't know if we'll ever need it again, but lets stay it here
-          let avgWeight = 0;
-            let avgTimeDelta: number = 0;
-
-            //Don't get the last one, because this is already one new entry
-            const avgEntries = this.flowProfileTempAll.slice(
-              this.flowProfileTempAll.length -
-                1 -
-                this.flowProfileArrCalculated.length,
-              this.flowProfileTempAll.length - 1
-            );
-            for (let i = 0; i < this.flowProfileArrCalculated.length - 1; i++) {
-              avgWeight =
-                avgWeight +
-                (this.flowProfileArrCalculated[i + 1] -
-                  this.flowProfileArrCalculated[i]);
-            }
-            for (let i = 0; i < avgEntries.length - 1; i++) {
-              avgTimeDelta =
-                avgTimeDelta +
-                (avgEntries[i + 1].unixTime - avgEntries[i].unixTime);
-            }
-            avgTimeDelta = avgTimeDelta / avgEntries.length;
-
-            calculatedFlowWeight =
-              (avgWeight / this.flowProfileArrCalculated.length) *
-              ((1000 - avgTimeDelta) / avgTimeDelta);
-          } else {
-            //Saftey when somehow just one value was provided.
-            calculatedFlowWeight = 0;
-          }*/
-        } else {
-          calculatedFlowWeight =
-            (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
+        const realtimeFlowSplit: Array<IBrewRealtimeWaterFlow> =
+          this.flow_profile_raw.realtimeFlow.slice(
+            -this.flowProfileArrCalculated.length
+          );
+        const slopeWeight = 1 / realtimeFlowSplit.length;
+        let avgCalculation: number = 0;
+        for (const entry of realtimeFlowSplit) {
+          avgCalculation = avgCalculation + slopeWeight * entry.flow_value;
         }
+        calculatedFlowWeight = avgCalculation;
 
         // Ignore flowing weight when we're below zero
         if (calculatedFlowWeight < 0) {
@@ -3920,9 +3880,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowTime = this.getTime();
       this.flowSecondTick = 0;
 
+      this.flowNCalculation = this.flowProfileArr.length;
+
       this.flowProfileArr = [];
       this.flowProfileArrObjs = [];
       this.flowProfileArrCalculated = [];
+
       this.updateChart();
     }
 
@@ -3931,15 +3894,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.flowProfileArrCalculated.push(weight - oldWeight);
 
     /* Realtime flow start**/
-    let oldRealtimeSmoothedValue = 0;
-    const realtimeFlowLength = this.flow_profile_raw.realtimeFlow.length;
-    if (realtimeFlowLength > 0) {
-      oldRealtimeSmoothedValue =
-        this.flow_profile_raw.realtimeFlow[realtimeFlowLength - 1]
-          .smoothed_weight;
-    }
-    const newSmoothedWeight = oldRealtimeSmoothedValue * 0.9 + weight * 0.1;
 
+    const newSmoothedWeight = flowObj.smoothedWeight;
     const realtimeWaterFlow: IBrewRealtimeWaterFlow =
       {} as IBrewRealtimeWaterFlow;
 
@@ -3947,25 +3903,30 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     realtimeWaterFlow.timestamp = flowObj.flowTimestamp;
     realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
 
-    if (
-      scaleType === ScaleType.SMARTCHEF ||
-      scaleType === ScaleType.BLACKCOFFEE
-    ) {
-      let timeStampDelta: any = 0;
-      // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
-      if (this.flowProfileTempAll.length > 1) {
-        timeStampDelta =
-          flowObj.unixTime -
-          this.flowProfileTempAll[this.flowProfileTempAll.length - 2].unixTime;
-      }
+    let timeStampDelta: any = 0;
+    let n: any = 3;
 
-      realtimeWaterFlow.flow_value =
-        (newSmoothedWeight - oldRealtimeSmoothedValue) *
-        (1000 / timeStampDelta);
+    if (this.flowNCalculation > 0 && this.flowNCalculation > 3) {
+      n = this.flowNCalculation;
     } else {
-      realtimeWaterFlow.flow_value =
-        (newSmoothedWeight - oldRealtimeSmoothedValue) * 10;
+      //Fallback if N cant be 3
+      n = this.flowProfileTempAll.length;
     }
+
+    // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
+    if (this.flowProfileTempAll.length > 2) {
+      timeStampDelta =
+        flowObj.unixTime -
+        this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+    }
+
+    realtimeWaterFlow.timestampdelta = timeStampDelta;
+
+    realtimeWaterFlow.flow_value =
+      (newSmoothedWeight -
+        this.flowProfileTempAll[this.flowProfileTempAll.length - n]
+          .smoothedWeight) *
+      (1000 / timeStampDelta);
 
     this.realtimeFlowTrace.x.push(flowObj.dateUnixTime);
     this.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);
@@ -4363,7 +4324,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const tool = this.data
           .getPreparation()
           .tools.find((e) => e.config.uuid === id);
-        if (tool.archived === false) {
+        if (tool?.archived === false) {
           this.data.method_of_preparation_tools.push(tool.config.uuid);
         }
       }
@@ -4395,5 +4356,25 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.data.reference_flow_profile = new ReferenceGraph();
 
     await this.instancePreparationDevice(brew);
+  }
+
+  public async showExtractionChart(event): Promise<void> {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(
+      BREW_TRACKING.TITLE,
+      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH
+    );
+    //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
+    const popover = await this.modalCtrl.create({
+      component: BrewPopoverExtractionComponent,
+      animated: true,
+      componentProps: { brew: this.data },
+      id: BrewPopoverExtractionComponent.COMPONENT_ID,
+      cssClass: 'popover-extraction',
+      initialBreakpoint: 1,
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
   }
 }

@@ -53,16 +53,25 @@ export class UIUpdate {
   public async checkUpdate() {
     this.uiLog.info('Check updates');
     const hasData: boolean = await this.uiStorage.hasData();
-    await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_4', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
+    try {
+      await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_4', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
+    } catch (ex) {
+      if (this.uiAlert.isLoadingSpinnerShown()) {
+        await this.uiAlert.hideLoadingSpinner();
+      }
+    }
+    if (this.uiAlert.isLoadingSpinnerShown()) {
+      await this.uiAlert.hideLoadingSpinner();
+    }
   }
 
   private async __updateDataVersion(_version): Promise<boolean> {
@@ -341,7 +350,7 @@ export class UIUpdate {
                         oldPath = oldPath.substr(1);
                       }
                       this.uiLog.log(
-                        `${_version} - Move file from ${this.file.dataDirectory} to ${this.file.syncedDataDirectory}; Name: ${oldPath}`
+                        `${_version} - Move file from ${this.file.dataDirectory} to ${this.file.documentsDirectory}; Name: ${oldPath}`
                       );
                       const newPath: string = await this.uiFileHelper.moveFile(
                         this.file.dataDirectory,
@@ -558,6 +567,7 @@ export class UIUpdate {
           await this.uiAlert.hideLoadingSpinner();
         }
       } catch (ex) {
+        await this.uiAlert.hideLoadingSpinner();
         this.uiLog.error(
           'Data version ' + _dataVersion + ' - could not update ' + ex.message
         );
@@ -578,7 +588,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '7.0.0';
+        versionCode = '7.1.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =

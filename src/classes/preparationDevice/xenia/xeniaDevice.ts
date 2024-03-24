@@ -191,13 +191,24 @@ export class XeniaDevice extends PreparationDevice {
 
   public startScript(_id: any) {
     const promise = new Promise<boolean>((resolve, reject) => {
-      const options = {
-        method: 'post',
-        data: { ID: _id },
-      };
+      let options = {};
+
       let urlAdding = '/execute_script';
       if (this.apiVersion !== 1) {
         urlAdding = '/api/v2/scripts/execute';
+        options = {
+          method: 'post',
+          data: JSON.stringify({ ID: _id }),
+          serializer: 'utf8',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          },
+        };
+      } else {
+        options = {
+          method: 'post',
+          data: { ID: _id },
+        };
       }
       cordova.plugin.http.sendRequest(
         this.getPreparation().connectedPreparationDevice.url + urlAdding,

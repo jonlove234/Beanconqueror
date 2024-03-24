@@ -23,6 +23,7 @@ export interface ISettings {
   // Properties
   brew_view: BREW_VIEW_ENUM;
   startup_view: STARTUP_VIEW_ENUM;
+  date_format: string;
 
   language: string;
   manage_parameters: IBrewParameter;
@@ -86,6 +87,18 @@ export interface ISettings {
     ESPRESSO: IBrewGraphs;
     FILTER: IBrewGraphs;
   };
+
+  graph_time: {
+    ESPRESSO: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
+    FILTER: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
+  };
+
   graph_weight: {
     ESPRESSO: {
       upper: number;
@@ -162,4 +175,6 @@ export interface ISettings {
   visualizer_username: string;
   visualizer_password: string;
   visualizer_upload_automatic: boolean;
+
+  show_backup_issues: boolean;
 }

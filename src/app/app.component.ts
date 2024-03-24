@@ -378,6 +378,9 @@ export class AppComponent implements AfterViewInit {
         try {
           await this.uiExportImportHelper.checkBackup();
         } catch (ex) {}
+        if (this.uiAlert.isLoadingSpinnerShown()) {
+          this.uiAlert.hideLoadingSpinner();
+        }
       }
 
       try {
@@ -497,6 +500,10 @@ export class AppComponent implements AfterViewInit {
                   settingLanguage = 'tr';
                 } else if (systemLanguage === 'zh') {
                   settingLanguage = 'zh';
+                } else if (systemLanguage === 'fr') {
+                  settingLanguage = 'fr';
+                } else if (systemLanguage === 'id') {
+                  settingLanguage = 'id';
                 } else {
                   settingLanguage = 'en';
                 }

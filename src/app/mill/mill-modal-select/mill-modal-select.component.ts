@@ -5,6 +5,8 @@ import { Mill } from '../../../classes/mill/mill';
 import { Brew } from '../../../classes/brew/brew';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Settings } from '../../../classes/settings/settings';
 
 @Component({
   selector: 'mill-modal-select',
@@ -20,11 +22,15 @@ export class MillModalSelectComponent implements OnInit {
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
+  public settings: Settings;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiMillStorage: UIMillStorage,
-    private readonly uiMillHelper: UIMillHelper
-  ) {}
+    private readonly uiMillHelper: UIMillHelper,
+    private readonly uiSettings: UISettingsStorage
+  ) {
+    this.settings = this.uiSettings.getSettings();
+  }
 
   public ionViewDidEnter(): void {
     this.objs = this.uiMillStorage.getAllEntries();
@@ -121,7 +127,11 @@ export class MillModalSelectComponent implements OnInit {
     );
     if (relatedBrews.length > 0) {
       relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      return relatedBrews[0].grind_size;
+      if (relatedBrews[0].mill_speed > 0) {
+        return relatedBrews[0].grind_size + ' @ ' + relatedBrews[0].mill_speed;
+      } else {
+        return relatedBrews[0].grind_size;
+      }
     }
     return '-';
   }

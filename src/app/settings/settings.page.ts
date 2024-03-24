@@ -198,6 +198,12 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectRefractometerDevice(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -295,6 +301,12 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectTemperatureDevice(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -367,6 +379,12 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectPressureDevice(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -438,6 +456,11 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectScale(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -518,7 +541,10 @@ export class SettingsPage implements OnInit {
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
 
-      if (scale.type === ScaleType.DIFLUIDMICROBALANCE) {
+      if (
+        scale.type === ScaleType.DIFLUIDMICROBALANCE ||
+        scale.type === ScaleType.DIFLUIDMICROBALANCETI
+      ) {
         //If there are multiple commands, and also to reset the sclae, the difluid have issues with this, therefore set delay to 300ms
         this.settings.bluetooth_command_delay = 300;
       } else if (scale.type === ScaleType.FELICITA) {
@@ -1056,7 +1082,6 @@ export class SettingsPage implements OnInit {
     this.uiExportImportHelper.buildExportZIP().then(
       async (_blob) => {
         this.uiLog.log('New zip-export way');
-        const isIOS = this.platform.is('ios');
 
         if (this.platform.is('cordova')) {
           if (this.platform.is('android')) {

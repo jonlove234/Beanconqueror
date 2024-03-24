@@ -49,67 +49,73 @@ export class UIExportImportHelper {
   public async buildExportZIP(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       this.uiStorage.export().then(async (_data) => {
-        const clonedData = this.uiHelper.cloneData(_data);
-        const brewChunks = [];
-        if (clonedData?.BREWS?.length > 0) {
-          const chunkSize = 500;
-          for (let i = 0; i < clonedData.BREWS.length; i += chunkSize) {
-            const chunk = clonedData.BREWS.slice(i, i + chunkSize);
-            brewChunks.push(chunk);
+        try {
+          const clonedData = this.uiHelper.cloneData(_data);
+          const brewChunks = [];
+          if (clonedData?.BREWS?.length > 0) {
+            const chunkSize = 500;
+            for (let i = 0; i < clonedData.BREWS.length; i += chunkSize) {
+              const chunk = clonedData.BREWS.slice(i, i + chunkSize);
+              brewChunks.push(chunk);
+            }
           }
-        }
 
-        const beanChunks = [];
-        if (clonedData?.BEANS?.length > 0) {
-          const chunkSize = 500;
-          for (let i = 0; i < clonedData.BEANS.length; i += chunkSize) {
-            const chunk = clonedData.BEANS.slice(i, i + chunkSize);
-            beanChunks.push(chunk);
+          const beanChunks = [];
+          if (clonedData?.BEANS?.length > 0) {
+            const chunkSize = 500;
+            for (let i = 0; i < clonedData.BEANS.length; i += chunkSize) {
+              const chunk = clonedData.BEANS.slice(i, i + chunkSize);
+              beanChunks.push(chunk);
+            }
           }
-        }
 
-        const originalJSON = this.uiHelper.cloneData(_data);
-        if (brewChunks.length > 0) {
-          originalJSON.BREWS = brewChunks[0];
-        }
-        if (beanChunks.length > 0) {
-          originalJSON.BEANS = beanChunks[0];
-        }
+          const originalJSON = this.uiHelper.cloneData(_data);
+          if (brewChunks.length > 0) {
+            originalJSON.BREWS = brewChunks[0];
+          }
+          if (beanChunks.length > 0) {
+            originalJSON.BEANS = beanChunks[0];
+          }
 
-        const zipFileWriter = new BlobWriter();
-        const beanconquerorJSON = new TextReader(JSON.stringify(originalJSON));
-        let zipWriter;
-        if (this.platform.is('ios')) {
-          // iOS got corrupt zip file, when compression is used, removing this, results into a bigger zip file, but leads into a working zip file again.
-          zip.configure({ useCompressionStream: false });
-          zipWriter = new ZipWriter(zipFileWriter);
-        } else {
-          zipWriter = new ZipWriter(zipFileWriter);
-        }
-
-        await zipWriter.add('Beanconqueror.json', beanconquerorJSON);
-
-        for (let i = 1; i < brewChunks.length; i++) {
-          const beanconquerorBrewJSON = new TextReader(
-            JSON.stringify(brewChunks[i])
+          const zipFileWriter = new BlobWriter();
+          const beanconquerorJSON = new TextReader(
+            JSON.stringify(originalJSON)
           );
-          await zipWriter.add(
-            'Beanconqueror_Brews_' + i + '.json',
-            beanconquerorBrewJSON
-          );
-        }
+          let zipWriter;
+          if (this.platform.is('ios')) {
+            // iOS got corrupt zip file, when compression is used, removing this, results into a bigger zip file, but leads into a working zip file again.
+            zip.configure({ useCompressionStream: false });
+            zipWriter = new ZipWriter(zipFileWriter);
+          } else {
+            zipWriter = new ZipWriter(zipFileWriter);
+          }
 
-        for (let i = 1; i < beanChunks.length; i++) {
-          const beanconquerorBeanJSON = new TextReader(
-            JSON.stringify(beanChunks[i])
-          );
-          await zipWriter.add(
-            'Beanconqueror_Beans_' + i + '.json',
-            beanconquerorBeanJSON
-          );
+          await zipWriter.add('Beanconqueror.json', beanconquerorJSON);
+
+          for (let i = 1; i < brewChunks.length; i++) {
+            const beanconquerorBrewJSON = new TextReader(
+              JSON.stringify(brewChunks[i])
+            );
+            await zipWriter.add(
+              'Beanconqueror_Brews_' + i + '.json',
+              beanconquerorBrewJSON
+            );
+          }
+
+          for (let i = 1; i < beanChunks.length; i++) {
+            const beanconquerorBeanJSON = new TextReader(
+              JSON.stringify(beanChunks[i])
+            );
+            await zipWriter.add(
+              'Beanconqueror_Beans_' + i + '.json',
+              beanconquerorBeanJSON
+            );
+          }
+          const zipFileBlob = await zipWriter.close();
+          resolve(zipFileBlob);
+        } catch (ex) {
+          reject();
         }
-        const zipFileBlob = await zipWriter.close();
-        resolve(zipFileBlob);
       });
     });
   }
@@ -237,50 +243,24 @@ export class UIExportImportHelper {
   public async checkBackup() {
     try {
       const promise = new Promise(async (resolve, reject) => {
-        if (this.platform.is('cordova')) {
-          this.uiLog.log('Check Backup');
-          const hasData = await this.uiStorage.hasData();
-          this.uiLog.log('Check Backup - Has data ' + hasData);
-          if (!hasData) {
-            this.uiLog.log(
-              'Check  Backup - No data are stored yet inside the app, so we try to find a backup file'
-            );
-            // If we don't got any data, we check now if there is a Beanconqueror.zip saved.
-            this.uiFileHelper.getZIPFile('Beanconqueror.zip').then(
-              async (_arrayBuffer) => {
-                await this.uiAlert.showLoadingSpinner();
-                try {
-                  this.uiLog.log(' We found a backup, try to import');
-                  const parsedJSON =
-                    await this.getJSONFromZIPArrayBufferContent(_arrayBuffer);
-                  this.uiStorage.import(parsedJSON).then(
-                    async () => {
-                      this.uiLog.log('Sucessfully imported  Backup');
-                      setTimeout(() => {
-                        this.uiAlert.hideLoadingSpinner();
-                      }, 150);
-                      resolve(null);
-                    },
-                    () => {
-                      this.uiLog.error('Could not import  Backup');
-                      setTimeout(() => {
-                        this.uiAlert.hideLoadingSpinner();
-                      }, 150);
-                      resolve(null);
-                    }
-                  );
-                } catch (ex) {}
-              },
-              () => {
-                this.uiLog.log(
-                  'Check Backup - We couldnt retrieve any zip file - try the old JSON Way.'
-                );
-
-                this.uiFileHelper.getJSONFile('Beanconqueror.json').then(
-                  async (_json) => {
-                    await this.uiAlert.showLoadingSpinner();
-                    this.uiLog.log('We found an backup, try to import');
-                    this.uiStorage.import(_json).then(
+        try {
+          if (this.platform.is('cordova')) {
+            this.uiLog.log('Check Backup');
+            const hasData = await this.uiStorage.hasData();
+            this.uiLog.log('Check Backup - Has data ' + hasData);
+            if (!hasData) {
+              this.uiLog.log(
+                'Check  Backup - No data are stored yet inside the app, so we try to find a backup file'
+              );
+              // If we don't got any data, we check now if there is a Beanconqueror.zip saved.
+              this.uiFileHelper.getZIPFile('Beanconqueror.zip').then(
+                async (_arrayBuffer) => {
+                  await this.uiAlert.showLoadingSpinner();
+                  try {
+                    this.uiLog.log(' We found a backup, try to import');
+                    const parsedJSON =
+                      await this.getJSONFromZIPArrayBufferContent(_arrayBuffer);
+                    this.uiStorage.import(parsedJSON).then(
                       async () => {
                         this.uiLog.log('Sucessfully imported  Backup');
                         setTimeout(() => {
@@ -296,23 +276,63 @@ export class UIExportImportHelper {
                         resolve(null);
                       }
                     );
-                  },
-                  () => {
+                  } catch (ex) {
                     setTimeout(() => {
                       this.uiAlert.hideLoadingSpinner();
                     }, 150);
-                    this.uiLog.log(
-                      'Check Backup - We couldnt retrieve any JSON file'
-                    );
-                    resolve(null);
                   }
-                );
-              }
-            );
+                },
+                () => {
+                  this.uiLog.log(
+                    'Check Backup - We couldnt retrieve any zip file - try the old JSON Way.'
+                  );
+
+                  this.uiFileHelper.getJSONFile('Beanconqueror.json').then(
+                    async (_json) => {
+                      await this.uiAlert.showLoadingSpinner();
+                      try {
+                        this.uiLog.log('We found an backup, try to import');
+                        this.uiStorage.import(_json).then(
+                          async () => {
+                            this.uiLog.log('Sucessfully imported  Backup');
+                            setTimeout(() => {
+                              this.uiAlert.hideLoadingSpinner();
+                            }, 150);
+                            resolve(null);
+                          },
+                          () => {
+                            this.uiLog.error('Could not import  Backup');
+                            setTimeout(() => {
+                              this.uiAlert.hideLoadingSpinner();
+                            }, 150);
+                            resolve(null);
+                          }
+                        );
+                      } catch (ex) {
+                        setTimeout(() => {
+                          this.uiAlert.hideLoadingSpinner();
+                        }, 150);
+                      }
+                    },
+                    () => {
+                      setTimeout(() => {
+                        this.uiAlert.hideLoadingSpinner();
+                      }, 150);
+                      this.uiLog.log(
+                        'Check Backup - We couldnt retrieve any JSON file'
+                      );
+                      resolve(null);
+                    }
+                  );
+                }
+              );
+            } else {
+              resolve(null);
+            }
           } else {
             resolve(null);
           }
-        } else {
+        } catch (ex) {
           resolve(null);
         }
       });
@@ -330,10 +350,30 @@ export class UIExportImportHelper {
         try {
           this.__saveInternalBeanconquerorDump(_blob);
           this.__saveAutomaticBeanconquerorDump(_blob);
-        } catch (ex) {}
+        } catch (ex) {
+          this.uiLog.error('ZIP file could not be saved');
+          const settings = this.uiSettingsStorage.getSettings();
+          if (settings.show_backup_issues) {
+            this.uiAlert.showMessage(
+              'ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD',
+              'CARE',
+              'OK',
+              true
+            );
+          }
+        }
       },
       () => {
         this.uiLog.error('ZIP file could not be saved');
+        const settings = this.uiSettingsStorage.getSettings();
+        if (settings.show_backup_issues) {
+          this.uiAlert.showMessage(
+            'ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD',
+            'CARE',
+            'OK',
+            true
+          );
+        }
       }
     );
   }
@@ -343,7 +383,17 @@ export class UIExportImportHelper {
         'Beanconqueror.zip',
         _blob
       );
-    } catch (ex) {}
+    } catch (ex) {
+      const settings = this.uiSettingsStorage.getSettings();
+      if (settings.show_backup_issues) {
+        this.uiAlert.showMessage(
+          'INTERNAL_BACKUP_DID_FAIL',
+          'CARE',
+          'OK',
+          true
+        );
+      }
+    }
   }
   private async __saveAutomaticBeanconquerorDump(_blob) {
     const settings = this.uiSettingsStorage.getSettings();
@@ -359,7 +409,16 @@ export class UIExportImportHelper {
           _blob,
           false
         );
-      } catch (ex) {}
+      } catch (ex) {
+        if (settings.show_backup_issues) {
+          this.uiAlert.showMessage(
+            'AUTOMATIC_BACKUP_DID_FAIL',
+            'CARE',
+            'OK',
+            true
+          );
+        }
+      }
     }
   }
 }
