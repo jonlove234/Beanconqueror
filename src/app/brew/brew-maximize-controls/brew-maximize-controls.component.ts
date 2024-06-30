@@ -41,7 +41,7 @@ export class BrewMaximizeControlsComponent
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
@@ -92,17 +92,15 @@ export class BrewMaximizeControlsComponent
   }
 
   public async ngAfterViewInit() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-
     this.showBloomTimer = this.uiBrewHelper.fieldVisible(
-      settings.manage_parameters.coffee_blooming_time,
+      this.settings.manage_parameters.coffee_blooming_time,
       this.brew.getPreparation().manage_parameters.coffee_blooming_time,
       this.brew.getPreparation().use_custom_parameters
     );
 
     this.showDripTimer =
       this.uiBrewHelper.fieldVisible(
-        settings.manage_parameters.coffee_first_drip_time,
+        this.settings.manage_parameters.coffee_first_drip_time,
         this.brew.getPreparation().manage_parameters.coffee_first_drip_time,
         this.brew.getPreparation().use_custom_parameters
       ) &&
