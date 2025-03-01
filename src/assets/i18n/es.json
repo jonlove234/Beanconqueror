@@ -1435,25 +1435,23 @@
         "8.1.0": {
             "TITLE": "Versión 8.1.0: Novedades",
             "DESCRIPTION": [
-                "<b>Granos<\/b>",
-                "Ordenar granos por último uso, fecha de compra y fecha de apertura de la bolsa",
-                "Soporte para un nuevo parámetro CO2e (kg) por kg de café tostado, que está desactivado por defecto",
-                "La exportación a Excel ahora incluye correctamente el grado de tueste",
-                "Nueva acción NFC\/QR-Code: Elegir acción. Al escanear la etiqueta, puedes elegir la acción que deseas ejecutar",
+                "<b>Cafés<\/b>",
+                "Ahora puedes ordenar cafés por el último uso, fecha de compra y fecha de apertura.",
+                "Añadido el nuevo parámetro CO2e (kg) por kg de café tostado. Deshabilitado por defecto.",
+                "Corregido un error en la exportación a Excel que no tenía en cuenta el  tipo de tueste.",
+                "Nueva acción para NFC\/QR: Elegir acción. Al escanear una etiqueta, puedes elegir qué acción quieres ejecutar.",
                 "",
                 "<b>Preparaciones<\/b>",
-                "Las ventanas de información para dispositivos bluetooth ahora son más grandes en tablets",
-                "Solución para la duplicación de peso en preparaciones de espresso",
+                "Adaptado el diseño de algunos iconos para pantallas más grandes como tablets.",
+                "Corregido un error en la función de duplicar peso en espressos.",
                 "",
                 "<b>Configuración<\/b>",
-                "Nueva característica: Se puede activar el guardado automático de la preparación",
-                "Nueva característica: Intervalo de actualización del gráfico, para dispositivos más antiguos que podrían congelarse\/retrasarse al actualizar los gráficos, se puede ajustar la frecuencia de actualización",
+                "Nueva función: Guardar preparación automáticamente.",
+                "Nueva función: Intervalo de actualización del gráfico. En dispositivos antiguos en los que el gráfico va un poco lento puedes ajustar el intervalo de actualización del mismo.",
                 "",
                 "<b>Otros<\/b>",
-                "Pequeñas correcciones"
+                "Pequeñas correcciones."
             ]
         }
-    },
-    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES": "Iniciar nuevas preparaciones con valores recientes",
-    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES_DESCRIPTION": "Cuando está activado, las nuevas preparaciones se rellenarán con valores de tu preparación más reciente"
+    }
 }

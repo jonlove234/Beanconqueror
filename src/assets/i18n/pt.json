@@ -403,6 +403,7 @@
             "BEAN_DATA_DECAFFEINATED": "Este café é descafeinado?",
             "BEAN_DATA_URL": "Adicione a URL do site",
             "BEAN_DATA_EAN": "Adicione o EAN ou número do artigo",
+            "BEAN_DATA_CUPPING_POINTS": "Adicione os pontos de cupping",
             "BEAN_DATA_PURCHASING_PRICE": "Adicione o preço de compra",
             "BEAN_DATA_FOB_PRICE": "Adicione o preço FOB",
             "NOTES": "Adicione notas sobre esses grãos",
@@ -1434,25 +1435,23 @@
         "8.1.0": {
             "TITLE": "Versão 8.1.0: O que há de novo",
             "DESCRIPTION": [
-                "<b>Grãos</b>",
-                "Classificar grãos por último uso, data de compra e data de abertura",
-                "Suporte para novo parâmetro CO2e (kg) por kg de café torrado, desativado por padrão",
-                "Exportação para Excel agora inclui corretamente o grau de torra",
-                "Novas ações NFC/QR-CODE: Selecionar ação. Ao escanear uma etiqueta, você pode escolher a ação a ser executada",
+                "<b>Cafés<\/b>",
+                "Classifique os grãos pelo último uso, data de compra e data de abertura do saco",
+                "Suporte a um novo parâmetro CO2e (kg) por kg de café torrado, que é desabilitado por padrão",
+                "A exportação do Excel agora herda corretamente o grau de torra",
+                "Nova ação NFC\/QR-Code: Escolha a ação. Ao escanear a tag, você pode escolher a ação que deseja executar",
                 "",
-                "<b>Extrações</b>",
-                "Informações de dispositivos Bluetooth agora são maiores em tablets",
-                "Corrigido problema de peso duplicado para extrações de espresso",
+                "Extração",
+                "Os blocos de informações para dispositivos Bluetooth agora são maiores no tablet",
+                "Duplicação de peso fixo para extração de café expresso",
                 "",
-                "<b>Configurações</b>",
-                "Novo recurso: Salvar extração automaticamente que pode ser ativado",
-                "Novo recurso: Intervalo de atualização do gráfico, para dispositivos mais antigos que podem congelar/atrasar ao atualizar os gráficos, você pode ajustar a taxa de atualização",
+                "Configurações",
+                "Novo recurso: Salvar preparo automaticamente, que pode ser ativado",
+                "Novo recurso: Atualizar intervalo de gráfico, para dispositivos mais antigos que podem congelar \/ atrasar ao atualizar os gráficos, você pode ajustar a taxa de atualização",
                 "",
-                "<b>Outros</b>",
-                "Pequenas correções"
+                "<b> Outro <\/b>",
+                "Pequenas melhorias"
             ]
         }
-    },
-    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES": "Iniciar novas extrações com valores recentes",
-    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES_DESCRIPTION": "Quando ativado, novas extrações serão pré-preenchidas com valores da sua extração mais recente"
+    }
 }
