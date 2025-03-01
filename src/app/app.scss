@@ -226,7 +226,8 @@ ion-buttons[start] button {
 }
 
 ion-list.no-label-margin ion-label {
-  margin: 0px !important;
+  margin: 0px 0px 0px 12px !important;
+  text-align: left;
 }
 
 .bean-icon {

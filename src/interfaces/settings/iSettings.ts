@@ -238,4 +238,5 @@ export interface ISettings {
 
   brew_timer_show_hours: boolean;
   brew_timer_show_minutes: boolean;
+  start_new_brews_with_most_recent_values: boolean;
 }

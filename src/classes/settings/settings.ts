@@ -45,6 +45,7 @@ export class Settings implements ISettings {
   public repeat_coffee_parameters: RepeatBrewParameter;
   public visible_list_view_parameters: ListViewBrewParameter;
   public brew_order: OrderBrewParameter;
+  public start_new_brews_with_most_recent_values: boolean;
 
   public bean_manage_parameters: BeanManageParameter;
   public bean_visible_list_view_parameters: BeanListViewParameter;
@@ -577,6 +578,7 @@ export class Settings implements ISettings {
 
     this.brew_timer_show_hours = true;
     this.brew_timer_show_minutes = true;
+    this.start_new_brews_with_most_recent_values = false;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

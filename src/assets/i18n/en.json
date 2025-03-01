@@ -69,6 +69,7 @@
     "PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP": "Press i for further information",
     "PAGE_SETTINGS_TRACK_BREW_COORDINATES": "Save brew geo-location",
     "PAGE_SETTINGS_FAST_REPEAT": "Fast brew repeat",
+    "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "When enabled, you can repeat a brew with one click from the brew list.",
     "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION": "Save caffeine consumption",
     "PAGE_SETTINGS_WAKE_LOCK": "Keep display active while brewing",
     "PAGE_SETTINGS_CURRENCY": "Currency",
@@ -288,9 +289,9 @@
     "MORE_INFORMATION": "More information",
     "UNDERSTOOD": "Understood",
     "WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE": "Analytics & Tracking",
-    "WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION": "We’d like to continuously improve the app, the website and our future services for you. To do so, we need to track some data how you use the app and its features. But we promise, we will never track any personal data. To ensure these promises, we use Matomo a data-security and privacy focused open source service which is hosted on our own server - this makes sure, that only we have the data ownership. Our website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source. You have questions? Then feel free to contact us.",
+    "WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION": "We'd like to continuously improve the app, the website and our future services for you. To do so, we need to track some data how you use the app and its features. But we promise, we will never track any personal data. To ensure these promises, we use Matomo a data-security and privacy focused open source service which is hosted on our own server - this makes sure, that only we have the data ownership. Our website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source. You have questions? Then feel free to contact us.",
     "ANALYTICS_INFORMATION_TITLE": "Analytics & Tracking",
-    "ANALYTICS_INFORMATION_DESCRIPTION": "As you know, the security of your data and your privacy is our top priority.<br\/><br\/>For this reason, we have switched from Google Analytics to the data-security and privacy focused open source service Matomo which is hosted on our own server - this means, that we have the full data ownership.<br\/><br\/>The tracked parameters haven’t changed, and we still promise that we will never track any personal data.<br\/><br\/>Our website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source.<br\/><br\/>You have questions?<br\/><br\/>Then feel free to contact us.",
+    "ANALYTICS_INFORMATION_DESCRIPTION": "As you know, the security of your data and your privacy is our top priority.<br\/><br\/>For this reason, we have switched from Google Analytics to the data-security and privacy focused open source service Matomo which is hosted on our own server - this means, that we have the full data ownership.<br\/><br\/>The tracked parameters haven't changed, and we still promise that we will never track any personal data.<br\/><br\/>Our website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source.<br\/><br\/>You have questions?<br\/><br\/>Then feel free to contact us.",
     "ACTIVATE": "Activate",
     "DO_NOT_ACTIVE": "Don't activate",
     "WELCOME_PAGE_BEAN_TITLE": "Bean",
@@ -469,7 +470,7 @@
     "PREPARATION_STYLE_FULL_IMMERSION": "Immersion",
     "PREPARATION_STYLE_PERCOLATION": "Percolation",
     "PREPARATION_TYPE_STYLE": "Preparation style",
-    "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Activates a new menu entry - with this you can repeat a brew identically.",
+    "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "When enabled, you can repeat a brew with one click from the brew list.",
     "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Save geo-location data to each brew.",
     "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION": "Save consumed caffeine amount",
     "UPDATE_TITLE": "Whats new?",
@@ -942,7 +943,7 @@
     "PRESSURE_THRESHOLD_ACTIVE": "Start timer with predefined pressure",
     "PRESSURE_THRESHOLD_BAR": "Threshold pressure",
     "TIMER_MILLISECONDS": "MS",
-    "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS": "Milliseconds?",
+    "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS": "Enable milliseconds",
     "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": "Use milliseconds to even more accurately analyze your brews",
     "PAGE_SETTINGS_BEAN_RATING": "Bean rating",
     "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "Is the default '0 to 5' not the right rating for you? You can instead use a '0 to 100' scale",
@@ -1453,5 +1454,7 @@
                 "Small fixes"
             ]
         }
-    }
+    },
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES": "Start new brews with most recent values",
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES_DESCRIPTION": "When enabled, new brews will be pre-populated with values from your most recent brew"
 }

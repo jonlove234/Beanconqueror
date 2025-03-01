@@ -261,6 +261,14 @@
               </div>
             </ion-checkbox>
           </ion-item>
+          <ion-item>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.start_new_brews_with_most_recent_values">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
+          </ion-item>
           <ion-item [lines]="settings.brew_milliseconds?'none':'full'">
             <ion-checkbox  label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_milliseconds">
               <div class="ion-label">
@@ -789,9 +797,10 @@
             <ion-item lines="none">
               <ion-label>
                 <h2>{{"SMART_SCALE_COMMAND_DELAY" | translate}}</h2>
+                <p>{{"SMART_SCALE_COMMAND_DELAY_TOOLTIP" | translate}}</p>
               </ion-label>
-              <ion-icon name="information-outline" slot="end"
-                tooltip='{{"SMART_SCALE_COMMAND_DELAY_TOOLTIP" | translate}}'></ion-icon>
+                <ion-icon name="information-outline" slot="end"
+                          tooltip='{{"SMART_SCALE_COMMAND_DELAY_TOOLTIP" | translate}}'></ion-icon>
             </ion-item>
             <ion-item style="top:-10px;">
               <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="50" snaps="true" max="1000"
@@ -819,8 +828,8 @@
               <ion-label>
                 <h2>{{"SMART_SCALE_ACAIA_HEARTBEAT_TIMER" | translate}}</h2>
               </ion-label>
-              <ion-icon name="information-outline" slot="end"
-                        tooltip='{{"SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP" | translate}}'></ion-icon>
+                <ion-icon name="information-outline" slot="end"
+                          tooltip='{{"SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP" | translate}}'></ion-icon>
             </ion-item>
             <ion-item style="top:-10px;">
               <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="200" snaps="true" max="1000"
@@ -1052,13 +1061,13 @@
             <ion-item>
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.pressure_threshold_active">
                 <div class='ion-label' style="white-space: normal;">
-                  <h2>{{"PRESSURE_THRESHOLD_ACTIVE" | translate}}</h2>
+                  <h2>{{"PRESSURE.THRESHOLD_ACTIVE" | translate}}</h2>
                 </div>
               </ion-checkbox>
             </ion-item>
             <ion-item *ngIf="settings.pressure_threshold_active">
               <div class='ion-label' style="white-space: normal;">
-                <h2>{{"PRESSURE_THRESHOLD_BAR" | translate}}</h2>
+                <h2>{{"PRESSURE.THRESHOLD_BAR" | translate}}</h2>
               </div>
               <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="12"
                 step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.pressure_threshold_bar">
@@ -1077,7 +1086,7 @@
             <ion-item>
               <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.pressure_log">
                 <div class="ion-label" style="white-space: normal;">
-                  <h2>{{"PRESSURE_LOG" | translate}}</h2>
+                  <h2>{{"PRESSURE.LOG" | translate}}</h2>
                 </div>
               </ion-checkbox>
             </ion-item>

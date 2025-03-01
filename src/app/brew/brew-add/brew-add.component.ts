@@ -521,7 +521,65 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
   }
 
+  /**
+   * Loads the values from the last brew when the setting is enabled
+   */
+  private async loadLastBrewValues(): Promise<void> {
+    try {
+      // Debug: Log that we're trying to load the last brew values
+      console.log('Attempting to load last brew values');
+
+      const lastBrews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+
+      // Debug: Log how many brews were found
+      console.log(`Found ${lastBrews.length} brews total`);
+
+      if (lastBrews && lastBrews.length > 0) {
+        // Sort by date descending to get the most recent brew
+        lastBrews.sort((a, b) => {
+          return b.config.unix_timestamp - a.config.unix_timestamp;
+        });
+
+        const lastBrew = lastBrews[0];
+
+        // Debug: Log information about the last brew
+        console.log(
+          `Last brew found: ${lastBrew.config.uuid}, date: ${lastBrew.config.unix_timestamp}`,
+        );
+
+        if (lastBrew) {
+          // Debug: Log that we're setting the brew template
+          console.log(
+            'Setting brew_template to the most recent brew to load its values',
+          );
+
+          // Instead of directly calling the private __loadBrew method,
+          // we'll set the brew_template which will trigger the loading
+          // of the last brew's values when the component is initialized
+          this.brew_template = lastBrew;
+
+          // Debug: Verify the brew_template was set
+          console.log(`brew_template set: ${this.brew_template !== undefined}`);
+        }
+      } else {
+        // Debug: Log that no brews were found
+        console.log('No previous brews found to load values from');
+      }
+    } catch (ex) {
+      console.error('Error loading last brew values:', ex);
+      this.uiLog.error('Error loading last brew values: ' + JSON.stringify(ex));
+    }
+  }
+
   public ngOnInit() {
+    // Check if we should pre-populate with most recent values
+    if (
+      this.settings.start_new_brews_with_most_recent_values &&
+      !this.brew_template
+    ) {
+      this.loadLastBrewValues();
+    }
+
     if (this.settings.security_check_when_going_back === true) {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
