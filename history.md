@@ -27,3 +27,21 @@
   - Modified the `no-label-margin` class in app.scss to add left margin (12px) for menu labels
   - Explicitly set text-align to left to ensure proper alignment
   - Improved UI by adding slight indentation while maintaining left alignment
+
+## Sat Mar 1 08:56:36 EST 2025
+
+### Added translations for "Start new brews with most recent values" setting
+
+- Added translations for the new setting in multiple languages:
+  - German (de.json)
+  - Spanish (es.json)
+  - French (fr.json)
+  - Italian (it.json)
+  - Chinese (zh.json)
+  - Turkish (tr.json)
+  - Polish (pl.json)
+  - Dutch (nl.json)
+  - Norwegian (no.json)
+  - Portuguese (pt.json)
+- Updated version 8.1.0 release notes in each language file
+- Ensured consistent formatting and styling across all language files

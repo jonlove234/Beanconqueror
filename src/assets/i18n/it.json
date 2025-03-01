@@ -403,7 +403,6 @@
             "BEAN_DATA_DECAFFEINATED": "Decaffeinato",
             "BEAN_DATA_URL": "Inserisci l'URL dello shop",
             "BEAN_DATA_EAN": "Inserisci il numero dell'articolo\/EAN",
-            "BEAN_DATA_CUPPING_POINTS": "Inserisci punteggio cupping",
             "BEAN_DATA_PURCHASING_PRICE": "Inserisci prezzo di acquisto dal produttore",
             "BEAN_DATA_FOB_PRICE": "Inserisci prezzo FOB",
             "NOTES": "Inserisci note su questo caffè",
@@ -1436,22 +1435,24 @@
             "TITLE": "Versione 8.1.0: Novità",
             "DESCRIPTION": [
                 "<b>Caffè<\/b>",
-                "Ordina i caffè per ultimo utilizzo, data di acquisto o di apertura del sacchetto",
-                "Supporto di un nuovo parametro: CO2e (kg) per caffè tostato, di default è disattivato",
-                "L'esportazione Excel eredita correttamente il grado di tostatura",
-                "Nuova azione NFC\/QR-Code: Scegliere l'azione. Durante la scansione del tag, è possibile scegliere l'azione che si desidera eseguire",
+                "Ordinamento dei caffè per ultimo utilizzo, data di acquisto e data di apertura della confezione",
+                "Aggiunto il nuovo parametro CO2e (kg) per kg di caffè tostato, disabilitato per impostazione predefinita",
+                "L'esportazione Excel ora include correttamente il grado di tostatura",
+                "Nuova azione NFC\/QR-Code: Scegli azione. Alla scansione del tag, puoi scegliere l'azione da eseguire",
                 "",
-                "<b>Preparazione<\/b>",
-                "I riquadri per i dispositivi Bluetooth sono più grandi sui tablet",
-                "Raddoppio del peso automatico per espresso",
+                "<b>Preparazioni<\/b>",
+                "Le informazioni sui dispositivi bluetooth sono ora più grandi sui tablet",
+                "Risolto il problema del raddoppio del peso per gli espressi",
                 "",
                 "<b>Impostazioni<\/b>",
-                "Nuova funzione: Salvataggio automatico della preparazione",
-                "Nuova funzione: è possibile regolare la frequenza di aggiornamento per i grafici, per i dispositivi più vecchi che potrebbero bloccarsi\/rallentarsi",
+                "Nuova funzionalità: Salvataggio automatico della preparazione che può essere attivato",
+                "Nuova funzionalità: Intervallo di aggiornamento del grafico, per i dispositivi più vecchi che potrebbero bloccarsi\/rallentare durante l'aggiornamento dei grafici",
                 "",
                 "<b>Altro<\/b>",
-                "Migliorie minori"
+                "Piccole correzioni"
             ]
         }
-    }
+    },
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES": "Inizia nuove preparazioni con valori recenti",
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES_DESCRIPTION": "Quando abilitato, le nuove preparazioni saranno precompilate con i valori dalla tua preparazione più recente"
 }

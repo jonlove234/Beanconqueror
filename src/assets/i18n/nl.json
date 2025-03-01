@@ -613,7 +613,7 @@
     "TOAST_BREW_FAVOURITE_ADDED": "Favoriet toegevoegd",
     "TOAST_BREW_FAVOURITE_REMOVED": "Favoriet verwijderd",
     "BREW_FILTER_JUST_FAVOURITE": "Favorieten",
-    "STATISTICS_PREPARATION_USAGES": "Bereidingsmethode gebruik",
+    "STATISTICS_PREPARATION_USAGES": "Bereidingsmethoden",
     "STATISTICS_PREPARATION_TIMELINE_USAGES": "Gebruiksgeschiedenis bereidingsmethode",
     "STATISTICS_GRINDER_TIMELINE_USAGES": "Gebruiksgeschiedenis van de Maler",
     "ACCEPT": "Accepteer",
@@ -1433,25 +1433,27 @@
     "SAVING_BREW_COUNTDOWN": "Brouwsel opslaan in {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
         "8.1.0": {
-            "TITLE": "Versie 8.1.0: Wat is er nieuw",
+            "TITLE": "Versie 8.1.0: Wat is nieuw",
             "DESCRIPTION": [
-                "<b> Bonen <\/b>",
-                "Sorteer bonen op laatste gebruik, aankoopdatum en datum waarop de zak is geopend",
-                "Ondersteuning van een nieuwe parameter CO2e (kg) per kg gebrande koffie, die standaard uitgeschakeld is",
-                "Excel-export neemt nu de correcte mate van branding over",
-                "Nieuwe NFC\/QR-Code actie: Kies actie. Bij het scannen van de tag kunt u de actie kiezen die u wilt uitvoeren",
+                "<b>Bonen</b>",
+                "Sorteer bonen op laatste gebruik, aankoopdatum en openingsdatum",
+                "Ondersteuning voor nieuwe parameter CO2e (kg) per kg geroosterde koffie, standaard uitgeschakeld",
+                "Excel-export bevat nu correct de roostgraad",
+                "Nieuwe NFC/QR-code acties: Selecteer actie. Bij het scannen van een tag kunt u de uit te voeren actie kiezen",
                 "",
-                "<b> Brouwsel <\/b>",
-                "Informatietegels voor Bluetooth-apparaten zijn nu groter op tablets",
-                "Vaste gewichtsverdubbeling voor espressobrouwsels",
+                "<b>Zetten</b>",
+                "Bluetooth-apparaatinformatie is nu groter op tablets",
+                "Probleem met dubbel gewicht voor espresso-zetten opgelost",
                 "",
-                "<b> Instellingen <\/b>",
-                "Nieuwe functie: Automatisch brouwsel opslaan, kan worden geactiveerd als optie",
-                "Nieuwe functie: Grafiekinterval bijwerken, voor oudere apparaten die mogelijk vastlopen\/vertragen tijdens het bijwerken van de grafieken, kunt u de vernieuwingsfrequentie aanpassen",
+                "<b>Instellingen</b>",
+                "Nieuwe functie: Automatisch opslaan van zetten kan worden geactiveerd",
+                "Nieuwe functie: Update-interval voor grafieken, voor oudere apparaten die mogelijk bevriezen/vertragen bij het bijwerken van grafieken kunt u de verversingssnelheid aanpassen",
                 "",
-                "<b> Anders <\/b>",
+                "<b>Overig</b>",
                 "Kleine fixes"
             ]
         }
-    }
+    },
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES": "Begin nieuwe zetten met recente waarden",
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES_DESCRIPTION": "Wanneer ingeschakeld, worden nieuwe zetten vooraf ingevuld met waarden van je meest recente zet"
 }

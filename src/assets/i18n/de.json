@@ -403,7 +403,6 @@
             "BEAN_DATA_DECAFFEINATED": "Ist der Kaffee Entkoffeiniert",
             "BEAN_DATA_URL": "Füge die Webseite hinzu",
             "BEAN_DATA_EAN": "Füge die EAN oder Artikelnummer hinzu",
-            "BEAN_DATA_CUPPING_POINTS": "Füge die Cupping Punkte hinzu",
             "BEAN_DATA_PURCHASING_PRICE": "Füge den Einkaufspreis hinzu",
             "BEAN_DATA_FOB_PRICE": "Füge den FOB Preis (USD) hinzu",
             "NOTES": "Füge Notizen zu deiner Bohne hinzu",
@@ -755,7 +754,7 @@
     "CUPPING_114": "Zedernholz",
     "CUPPING_115": "Tabak",
     "CUPPING_116": "Heu",
-    "CUPPING_117": "“Grün“",
+    "CUPPING_117": "Grün",
     "CUPPING_118": "Olive",
     "CUPPING_119": "Grüner Pfeffer",
     "CUPPING_120": "Kürbis",
@@ -1433,25 +1432,27 @@
     "SAVING_BREW_COUNTDOWN": "Brühung wird in {{time}} gespeichert",
     "UPDATE_TEXT_TITLE_TITLE": {
         "8.1.0": {
-            "TITLE": "Version 8.1.0: Das ist neu",
+            "TITLE": "Version 8.1.0: Was ist neu",
             "DESCRIPTION": [
-                "<b>Bohnen<\/b>",
-                "Bohnen können nun nach letzter Verwendung, Kaufdatum oder Öffnungsdatum sortiert werden",
-                "Unterstützung eines neuen Parameters CO2e (kg) pro kg Röstkaffee, der standardmäßig deaktiviert ist",
-                "Excel-Export übernimmt jetzt korrekt den Röstgrad",
-                "Neue NFC\/QR-Code-Aktion: Aktion auswählen. Beim Scannen des Tags kann die Aktion ausgewählt werden, welche ausgeführt werden soll",
+                "<b>Beans<\/b>",
+                "Sort beans by last used, buy date and bag open date",
+                "Supporting a new parameter CO2e (kg) per kg roasted coffee, which is disabled by default",
+                "Excel export inherits now correctly the degree of roast",
+                "New NFC\/QR-Code action: Choose action. When scanning the tag, you can choose the action you want to execute",
                 "",
-                "Brühungen",
-                "Kachelinformationen von Bluetooth Geräten sind nun größer auf Tablets",
-                "Behebung der Gewichtverdoppelung für Espressobrühungen",
+                "<b>Brew<\/b>",
+                "Information tiles for bluetooth devices are now bigger on tablet",
+                "Fixed weight doubling for espresso brews",
                 "",
-                "<b>Einstellungen<\/b>",
-                "Neue Funktion: Automatisches Speichern des Brühvorgangs kann aktiviert werden",
-                "Neue Funktion: Aktualisierung des Diagrammintervalls, für ältere Geräte, die beim Aktualisieren der Diagramme einfrieren\/verzögert werden können, kann die Bildwiederholfrequenz anpasst werden",
+                "<b>Settings<\/b>",
+                "New feature: Save brew automatically which can be activated",
+                "New feature: Update graph interval, for older devices which might could freeze\/lag while updating the graphs you can adjust the refresh rate",
                 "",
-                "<b>Sonstiges<\/b>",
-                "Kleinere Fehlerbehebungen"
+                "<b>Other<\/b>",
+                "Small fixes"
             ]
         }
-    }
+    },
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES": "Neue Brühungen mit den letzten Werten starten",
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES_DESCRIPTION": "Wenn aktiviert, werden neue Brühungen mit Werten aus deiner letzten Brühung vorausgefüllt"
 }

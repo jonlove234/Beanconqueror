@@ -403,7 +403,6 @@
             "BEAN_DATA_DECAFFEINATED": "Er denne kaffen koffeinfri",
             "BEAN_DATA_URL": "Legg til nettadressen",
             "BEAN_DATA_EAN": "Legg til EAN eller artikkelnummer",
-            "BEAN_DATA_CUPPING_POINTS": "Legg til cupping-poengene",
             "BEAN_DATA_PURCHASING_PRICE": "Legg til innkjøpsprisen",
             "BEAN_DATA_FOB_PRICE": "Legg til FOB-prisen",
             "NOTES": "Legg til merknad om disse bønnene",
@@ -1433,25 +1432,27 @@
     "SAVING_BREW_COUNTDOWN": "Lagre brygg etter {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
         "8.1.0": {
-            "TITLE": "Versjon 8.1.0: Hva er nytt?",
+            "TITLE": "Versjon 8.1.0: Hva er nytt",
             "DESCRIPTION": [
-                "<b>Bønner<\/b>",
-                "Sorter bønner etter sist brukte, kjøpsdato og åpningsdato for posen",
-                "Støtter et nytt parameter CO2e (kg) per kg brent kaffe. Denne er deaktivert som standard",
-                "Excel-eksport viser nå korrekt brennegrad",
-                "Ny NFC\/QR-kodehandling: Velg handling. Når du skanner taggen, kan du velge handlingen du vil utføre",
+                "<b>Bønner</b>",
+                "Sorter bønner etter siste bruk, kjøpsdato og åpningsdato",
+                "Støtte for ny parameter CO2e (kg) per kg brent kaffe, deaktivert som standard",
+                "Excel-eksport inkluderer nå riktig brenningsgrad",
+                "Nye NFC/QR-kode handlinger: Velg handling. Når du skanner en tag, kan du velge handlingen som skal utføres",
                 "",
-                "<b>Brygg<\/b>",
-                "Informasjonsflisene for blåtann-enheter er nå forstørret på nettbrett",
-                "Fikset vekt-dobling for espresso-brygg",
+                "<b>Brygg</b>",
+                "Bluetooth-enhetsinformasjon er nå større på nettbrett",
+                "Fikset problem med dobbel vekt for espresso-brygg",
                 "",
-                "<b>Innstillinger<\/b>",
-                "Ny funksjon: Lagre brygg automatisk kan aktiveres",
-                "Ny funksjon: Oppdater grafintervallet. For eldre enheter som kan fryse eller hvor du opplever forsinkelse. Du kan nå justere oppdateringsfrekvensen.",
+                "<b>Innstillinger</b>",
+                "Ny funksjon: Automatisk lagring av brygg som kan aktiveres",
+                "Ny funksjon: Oppdateringsintervall for grafer, for eldre enheter som kan fryse/henge ved oppdatering av grafer kan du justere oppdateringsfrekvensen",
                 "",
-                "<b>Annet<\/b>",
-                "Småjusteringer"
+                "<b>Annet</b>",
+                "Små fikser"
             ]
         }
-    }
+    },
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES": "Start nye brygg med nylige verdier",
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES_DESCRIPTION": "Når aktivert, vil nye brygg forhåndsutfylles med verdier fra ditt siste brygg"
 }

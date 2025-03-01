@@ -1435,23 +1435,25 @@
         "8.1.0": {
             "TITLE": "Sürüm 8.1.0: Yenilikler",
             "DESCRIPTION": [
-                "<b>Çekirdekler<\/b>",
-                "Çekirdekleri son kullanım, satın alma tarihi ve torba açılış tarihine göre sıralayın",
-                "Varsayılan olarak devre dışı bırakılan, kg kavrulmuş kahve başına yeni bir CO2e (kg) parametresinin desteklenmesi",
-                "Excel'e dışa aktarırken artık kavurma derecesini doğru şekilde algılıyor",
-                "Yeni NFC\/QR-Code eylemi: Eylem seçin. Etiketi tararken, yürütmek istediğiniz eylemi seçebilirsiniz",
+                "<b>Kahve Çekirdekleri</b>",
+                "Çekirdekleri son kullanım, satın alma tarihi ve açılış tarihine göre sıralama",
+                "Kavrulmuş kahve kilogramı başına CO2e (kg) için yeni parametre desteği, varsayılan olarak devre dışı",
+                "Excel dışa aktarımı artık kavurma derecesini doğru şekilde içeriyor",
+                "Yeni NFC/QR-CODE işlemleri: İşlem seçimi. Bir etiketi taradığınızda, gerçekleştirilecek işlemi seçebilirsiniz",
                 "",
-                "<b>Demleme<\/b>",
-                "Bluetooth cihazları için bilgi kutucukları artık tabletlerde daha büyük",
-                "Espresso demlemeleri için sabit ağırlığı iki katına çıkarma",
+                "<b>Demlemeler</b>",
+                "Tabletlerde Bluetooth cihaz bilgileri artık daha büyük",
+                "Espresso demlemelerinde ağırlık çoğaltma sorunu düzeltildi",
                 "",
-                "<b> Ayarlar <\/b>",
-                "Yeni özellik: Etkinleştirdiğinde demlemeyi otomatik olarak kaydeder",
-                "Yeni özellik: Grafik aralığını güncelleyin, grafikleri güncellerken donabilecek\/gecikebilecek eski cihazlar için yenileme hızını ayarlayabilirsiniz",
+                "<b>Ayarlar</b>",
+                "Yeni özellik: Etkinleştirilebilen otomatik demleme kaydetme",
+                "Yeni özellik: Grafik güncelleme aralığı, grafikleri güncellerken donabilen/gecikebilen eski cihazlar için yenileme hızını ayarlayabilirsiniz",
                 "",
-                "<b> Diğer <\/b>",
-                "Küçük hata düzeltmeleri"
+                "<b>Diğer</b>",
+                "Küçük düzeltmeler"
             ]
         }
-    }
+    },
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES": "Yeni demlemeleri en son değerlerle başlat",
+    "PAGE_SETTINGS_START_NEW_BREWS_WITH_MOST_RECENT_VALUES_DESCRIPTION": "Etkinleştirildiğinde, yeni demlemeler en son demlemenizin değerleriyle önceden doldurulacaktır"
 }
