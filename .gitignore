@@ -35,4 +35,7 @@ $RECYCLE.BIN/
 Thumbs.db
 UserInterfaceState.xcuserstate
 /android/app/release/
+history.md
+local-todo.nocommit.md
+*.nocommit.md
 
